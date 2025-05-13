@@ -1,0 +1,14 @@
+.signupCardContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.signupCard{
+    width: auto;
+}
+
+.inputContainer{
+    display: flex;
+    flex-direction: column;
+}

@@ -1,0 +1,13 @@
+.notFoundContainer {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  transform: translateX(-50%);
+  text-align: center;
+}
+
+.notFoundText {
+  font-size: 3rem;
+  font-weight: 700;
+  color: red;
+}

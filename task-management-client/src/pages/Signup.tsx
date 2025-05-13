@@ -2,6 +2,10 @@ import axios from "axios";
 import React, { useState } from "react";
 import { API_BASE_URL } from "../utils/constants";
 import { ToastContainer, toast } from "react-toastify";
+import Header from "../components/Header";
+import { Button, Card, Space } from "antd";
+import "./styles/Signup.css";
+import { Link } from "react-router-dom";
 
 const Signup = () => {
   const [firstName, setFirstName] = useState("");
@@ -34,59 +38,78 @@ const Signup = () => {
   }
 
   return (
-    <div>
-      <div>
-        <label>First name</label>
-        <input
-          type="text"
-          placeholder="Enter first name"
-          onChange={(e) => setFirstName(e.target.value)}
-          name="firstName"
-        />
-      </div>
+    <>
+      <Header />
+      <div className="signupCardContainer">
+        <Space direction="vertical" size={16}>
+          <Card title="Sign Up" className="signupCard">
+            <div>
+              <div className="inputContainer">
+                <label>First Name</label>
+                <input
+                  className="customInput"
+                  type="text"
+                  placeholder="Enter first name"
+                  onChange={(e) => setFirstName(e.target.value)}
+                  name="firstName"
+                />
+              </div>
 
-      <div>
-        <label>Last name</label>
-        <input
-          type="text"
-          placeholder="Enter first name"
-          onChange={(e) => setLastName(e.target.value)}
-          name="lastName"
-        />
-      </div>
+              <div className="inputContainer">
+                <label>Last Name</label>
+                <input
+                  className="customInput"
+                  type="text"
+                  placeholder="Enter last name"
+                  onChange={(e) => setLastName(e.target.value)}
+                  name="lastName"
+                />
+              </div>
 
-      <div>
-        <label>Email</label>
-        <input
-          type="email"
-          placeholder="Enter email"
-          onChange={(e) => setEmail(e.target.value)}
-          name="email"
-        />
-      </div>
+              <div className="inputContainer">
+                <label>Email</label>
+                <input
+                  className="customInput"
+                  type="email"
+                  placeholder="Enter email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                />
+              </div>
 
-      <div>
-        <label>Password</label>
-        <input
-          type="password"
-          placeholder="Enter password"
-          onChange={(e) => setPassword(e.target.value)}
-          name="password"
-        />
-      </div>
+              <div className="inputContainer">
+                <label>Password</label>
+                <input
+                  className="customInput"
+                  type="password"
+                  placeholder="Enter password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  name="password"
+                />
+              </div>
 
-      <div>
-        <label>Confirm Password</label>
-        <input
-          type="password"
-          placeholder="Enter confirm password"
-          name="confirmPassword"
-          onChange={(e) => setConfirmPassword(e.target.value)}
-        />
+              <div className="inputContainer">
+                <label>Confirm Password</label>
+                <input
+                  className="customInput"
+                  type="password"
+                  placeholder="Enter confirm password"
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  name="confirmPassword"
+                />
+              </div>
+              <div style={{ padding: "5px" }}>
+                <Link to="/login">Click here to login</Link>
+              </div>
+              <Button onClick={handleSignup} type="primary">
+                Submit
+              </Button>
+              <ToastContainer />
+            </div>
+          </Card>
+        </Space>
       </div>
-      <button onClick={handleSignup}>Submit</button>
-      <ToastContainer />
-    </div>
+    </>
   );
 };
 

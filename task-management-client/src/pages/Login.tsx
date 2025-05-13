@@ -2,6 +2,10 @@ import React, { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { API_BASE_URL } from "../utils/constants";
+import { Button, Card, Space } from "antd";
+import Header from "../components/Header";
+import "./styles/Login.css";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -21,7 +25,7 @@ const Login = () => {
       if (res.data) {
         const token = res?.data?.token;
         console.log("token", token);
-        localStorage.setItem("token",token);
+        localStorage.setItem("token", token);
         toast("Signin successfull");
       }
       console.log("res", res);
@@ -29,29 +33,43 @@ const Login = () => {
   }
 
   return (
-    <div>
-      <div>
-        <label>Email</label>
-        <input
-          type="email"
-          placeholder="Enter email"
-          onChange={(e) => setEmail(e.target.value)}
-          name="email"
-        />
-      </div>
+    <>
+      <Header />
+      <div className="loginCardContainer">
+        <Space direction="vertical" size={16}>
+          <Card title="Login" className="loginCard">
+            <div>
+              <div className="inputContainer">
+                <label>Email:</label>
+                <input
+                  className="customInput"
+                  type="email"
+                  placeholder="Enter email"
+                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                />
+              </div>
 
-      <div>
-        <label>Password</label>
-        <input
-          type="password"
-          placeholder="Enter password"
-          onChange={(e) => setPassword(e.target.value)}
-          name="password"
-        />
+              <div className="inputContainer">
+                <label>Password</label>
+                <input
+                  className="customInput"
+                  type="password"
+                  placeholder="Enter password"
+                  onChange={(e) => setPassword(e.target.value)}
+                  name="password"
+                />
+              </div>
+              <div style={{padding:'5px'}}>
+                <Link to="/signup">Click here to sign up</Link>
+              </div>
+              <Button onClick={handleSignin} type="primary">Submit</Button>
+              <ToastContainer />
+            </div>
+          </Card>
+        </Space>
       </div>
-      <button onClick={handleSignin}>Submit</button>
-      <ToastContainer />
-    </div>
+    </>
   );
 };
 

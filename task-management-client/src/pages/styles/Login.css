@@ -1,0 +1,14 @@
+.loginCardContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loginCard{
+    width: auto;
+}
+
+.inputContainer{
+    display: flex;
+    flex-direction: column;
+}
