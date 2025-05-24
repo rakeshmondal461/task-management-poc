@@ -1,8 +1,5 @@
 import { Request, Response } from "express";
 import Task from "../models/taskModel";
-import { AnyARecord } from "dns";
-
-
 
 export const getTasks = async (req: Request, res: Response) => {
   try {

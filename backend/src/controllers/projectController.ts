@@ -1,6 +1,5 @@
 import Project from "../models/projectModel";
 import { Request, Response } from "express";
-import { Jwt } from "jsonwebtoken";
 
 export const getProjects = async (req: Request, res: Response) => {
   try {

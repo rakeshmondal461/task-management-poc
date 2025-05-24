@@ -5,11 +5,14 @@ import adminRoutes from "./routes/adminRoutes";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import cors from "cors";
+import { createServer } from 'node:http';
+import { Server } from 'socket.io';
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4001;
+const httpServer = createServer(app);
 
 app.use(express.json());
 app.use(cors());
@@ -20,6 +23,16 @@ app.use("/userRoutes", userRoutes);
 app.use("/auth", authRoutes);
 
 // Connect to the database
+
+const io = new Server(httpServer);
+
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('disconnect', () => {
+    console.log('User disconnected');
+  });
+});
 
 connectDB().then(() => {
   app.listen(PORT, () => {
