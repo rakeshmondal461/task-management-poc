@@ -6,7 +6,9 @@ import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import cors from "cors";
 import { createServer } from 'node:http';
-import { Server } from 'socket.io';
+import { initSocket } from "./utils/socket";
+
+
 
 dotenv.config();
 
@@ -24,15 +26,7 @@ app.use("/auth", authRoutes);
 
 // Connect to the database
 
-const io = new Server(httpServer);
-
-io.on('connection', (socket) => {
-  console.log('A user connected');
-
-  socket.on('disconnect', () => {
-    console.log('User disconnected');
-  });
-});
+initSocket(httpServer)
 
 connectDB().then(() => {
   app.listen(PORT, () => {

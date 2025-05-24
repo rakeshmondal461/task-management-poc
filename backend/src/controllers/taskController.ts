@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Task from "../models/taskModel";
+import { getIO } from "../utils/socket";
 
 export const getTasks = async (req: Request, res: Response) => {
   try {
@@ -59,6 +60,11 @@ export const updateTaskStatus = async (req: Request, res: Response) => {
     }
 
     const task = await Task.findByIdAndUpdate(reqData.taskId, {
+      status: reqData.status,
+    });
+    const io = getIO();
+    io.emit("update-task-status", {
+      taskId: reqData.taskId,
       status: reqData.status,
     });
     res.json({ message: "Task updated successfully", task });
