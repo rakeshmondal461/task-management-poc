@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import Task from "../models/taskModel";
+import User from "../models/userModel";
 import { getIO } from "../utils/socket";
 
 export const getTasks = async (req: Request, res: Response) => {
@@ -32,16 +33,26 @@ export const getTaskById = async (req: Request, res: Response) => {
 export const assignTask = async (req: any, res: Response) => {
   try {
     const reqData = req.body;
-    if (!reqData.projectId || !req.userId) {
-      res.status(400).json({ message: "Fill provide project name" });
+    if (!reqData.projectId.trim() || !reqData.userId || !reqData.title.trim()) {
+      res.status(400).json({ message: "provide required data" });
+      return;
     }
 
-    if (req.user.userType != "admin")
+    let userData: any = null;
+    if (req.user.id) {
+      userData = await User.findById(req.user.id);
+    }
+
+    console.log("userData", userData);
+    if (!userData || userData.userType != "admin") {
       res.status(405).json({ message: "You are not allowed to create Task" });
+      return;
+    }
 
     const data = {
       project: reqData.projectId,
-      assignedTo: req.userId,
+      assignedTo: reqData.userId,
+      title: reqData.title,
       status: "pending",
     };
 
@@ -55,11 +66,13 @@ export const assignTask = async (req: any, res: Response) => {
 export const updateTaskStatus = async (req: Request, res: Response) => {
   try {
     const reqData = req.body;
-    if (!reqData.taskId || !reqData.status) {
+    const taskId = req.params.id;
+
+    if (!taskId || !reqData.status) {
       res.status(400).json({ message: "Select status" });
     }
 
-    const task = await Task.findByIdAndUpdate(reqData.taskId, {
+    const task = await Task.findByIdAndUpdate(taskId, {
       status: reqData.status,
     });
     const io = getIO();

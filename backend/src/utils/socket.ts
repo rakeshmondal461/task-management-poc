@@ -18,6 +18,10 @@ export const initSocket = (httpServer: HttpServer) => {
     });
   });
 
+  io.on("update-task-status", (socket) => {
+    console.log("Task status updated", socket);
+  });
+
   return io;
 };
 

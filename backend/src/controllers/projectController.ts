@@ -28,7 +28,7 @@ export const createProject = async (req: Request, res: Response) => {
     }
 
     const data = {
-      firstName: reqData.projectName,
+      projectName: reqData.projectName,
       isActive: true,
     };
 
