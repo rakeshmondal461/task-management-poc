@@ -1,10 +1,13 @@
-const express = require("express");
-require("dotenv").config();
-const connectDB = require("./dbConfig");
-const adminRoutes = require("./routes/adminRoutes");
-const userRoutes = require("./routes/userRoutes");
-const authRoutes = require("./routes/authRoutes");
-const cors = require("cors");
+import express from "express";
+import dotenv from "dotenv";
+import { connectDB } from "./dbConfig";
+import adminRoutes from "./routes/adminRoutes";
+import userRoutes from "./routes/userRoutes";
+import authRoutes from "./routes/authRoutes";
+import cors from "cors";
+
+dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 4001;
 

@@ -7,7 +7,4 @@ const adminController = require('../controllers/adminController');
 router.post('/signup', userController.signupUser);   
 router.post('/signin', userController.signInUser); 
 
-
-
-
-module.exports = router;
+export default router;

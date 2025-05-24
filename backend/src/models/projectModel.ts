@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 // Define the User schema
 const projectSchema = new mongoose.Schema({
   projectName: {
@@ -20,4 +20,4 @@ const projectSchema = new mongoose.Schema({
 });
 // Create the User model from the schema
 const Project = mongoose.model("Project", projectSchema);
-module.exports = Project;
+export default Project;

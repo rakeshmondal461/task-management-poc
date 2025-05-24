@@ -1,35 +1,37 @@
-const task = require("../models/taskModel");
-const user = require("../models/userModel");
+import { Request, Response } from "express";
+import Task from "../models/taskModel";
+import { AnyARecord } from "dns";
 
-const getTasks = async (req, res) => {
+
+
+export const getTasks = async (req: Request, res: Response) => {
   try {
-    const tasks = await task.find();
+    const tasks = await Task.find();
     res.status(200).json({ tasks });
-  } catch (error) {
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+export const getUserTasks = async (req: any, res: Response) => {
+  try {
+    const tasks = await Task.find({ assignedTo: req?.user.id });
+    res.status(200).json({ tasks });
+  } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const getUserTasks = async (req, res) => {
-  try {
-    const tasks = await task.find({ assignedTo: req.user.id });
-    res.status(200).json({ tasks });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const getTaskById = async (req, res) => {
+export const getTaskById = async (req: Request, res: Response) => {
   try {
     const taskId = req.params.id;
-    const task = await task.findById(taskId);
+    const task = await Task.findById(taskId);
     res.status(200).json({ task });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const assignTask = async (req, res) => {
+export const assignTask = async (req: any, res: Response) => {
   try {
     const reqData = req.body;
     if (!reqData.projectId || !req.userId) {
@@ -45,33 +47,25 @@ const assignTask = async (req, res) => {
       status: "pending",
     };
 
-    const newTask = await task.create(data);
+    const newTask = await Task.create(data);
     res.json({ message: "Task created successfully", newTask });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };
 
-const updateTaskStatus = async (req, res) => {
+export const updateTaskStatus = async (req: Request, res: Response) => {
   try {
     const reqData = req.body;
     if (!reqData.taskId || !reqData.status) {
       res.status(400).json({ message: "Select status" });
     }
 
-    const task = await task.findByIdAndUpdate(reqData.taskId, {
+    const task = await Task.findByIdAndUpdate(reqData.taskId, {
       status: reqData.status,
     });
     res.json({ message: "Task updated successfully", task });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
-};
-
-module.exports = {
-  getTasks,
-  getUserTasks,
-  getTaskById,
-  assignTask,
-  updateTaskStatus,
 };
