@@ -1,0 +1,16 @@
+.dashboardLinks{
+    list-style: none;
+    display: flex;
+    flex-direction: row;
+    gap: 30px;
+    padding-left: 0;
+
+}
+
+.dashboardLinks li a {
+    text-decoration: none;
+    color: #007bff;
+    font-weight: 600;
+    font-style: italic;
+    cursor: pointer;
+}

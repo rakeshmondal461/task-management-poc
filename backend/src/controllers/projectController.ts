@@ -33,7 +33,9 @@ export const createProject = async (req: Request, res: Response) => {
     };
 
     const newProject = await Project.create(data);
-    res.json({ message: "Project created successfully", newProject });
+    res
+      .status(201)
+      .json({ message: "Project created successfully", newProject });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -61,5 +63,3 @@ export const updateProject = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
-
-

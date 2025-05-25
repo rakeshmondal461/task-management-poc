@@ -53,7 +53,6 @@ const Login = () => {
     } catch (error) {
       console.error("Error during sign-in:", error);
       if (axios.isAxiosError(error) && error.response) {
-        // Handle specific error response from the server
         toast(error.response.data.message || "Sign-in failed");
       }
     }

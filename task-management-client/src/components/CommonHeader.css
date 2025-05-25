@@ -1,0 +1,37 @@
+.headerContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 2px 2px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.headerContainer .headerButtonContainer{
+    display: flex;
+    justify-self: center;
+    align-items: center;
+}
+
+
+.headerContainer .headerTitle{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+
+.headerContainer .headerTitle .headerLogo{
+    width: 26px;
+    height: 26px;
+    background-color: #007bff;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.headerContainer .headerTitle .headerTitleText{
+    font-weight: 600;
+}

@@ -1,8 +1,13 @@
-import React from 'react'
-
+import CommonHeader from "../components/CommonHeader"
 const Home = () => {
   return (
-    <div>Home</div>
+    <>
+      <CommonHeader />
+      <h1>Home</h1>
+      <div>
+        <p>Welcome to Homepage!</p>
+      </div>
+    </>
   )
 }
 
