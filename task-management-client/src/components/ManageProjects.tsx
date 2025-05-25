@@ -1,7 +1,6 @@
 import { Button, Form, Input, List } from "antd";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import "./ManageProjects.css";
 import ApiRequest from "../utils/ApiRequest";
 import type { ApiProject, ListProject } from "../types/project.types";
 

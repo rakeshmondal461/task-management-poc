@@ -3,6 +3,13 @@ import Task from "../models/taskModel";
 import User from "../models/userModel";
 import { getIO } from "../utils/socket";
 
+type TaskData = {
+  project: string;
+  title: string;
+  assignedTo?: string;
+  status?: string;
+};
+
 export const getTasks = async (req: Request, res: Response) => {
   try {
     const tasks = await Task.find();
@@ -30,10 +37,10 @@ export const getTaskById = async (req: Request, res: Response) => {
   }
 };
 
-export const assignTask = async (req: any, res: Response) => {
+export const createAndAssignTask = async (req: any, res: Response) => {
   try {
     const reqData = req.body;
-    if (!reqData.projectId.trim() || !reqData.userId || !reqData.title.trim()) {
+    if (!reqData.projectId.trim() || !reqData.title.trim()) {
       res.status(400).json({ message: "provide required data" });
       return;
     }
@@ -49,15 +56,54 @@ export const assignTask = async (req: any, res: Response) => {
       return;
     }
 
-    const data = {
+    const data: TaskData = {
       project: reqData.projectId,
-      assignedTo: reqData.userId,
       title: reqData.title,
       status: "pending",
     };
+    if (reqData.userId) {
+      data["assignedTo"] = reqData.userId;
+    }
 
     const newTask = await Task.create(data);
     res.json({ message: "Task created successfully", newTask });
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+export const assignTask = async (req: any, res: Response) => {
+  try {
+    const reqData = req.body;
+    if (!reqData.userId || !reqData.taskId) {
+      res.status(400).json({ message: "provide required data" });
+      return;
+    }
+
+    let userData: any = null;
+    if (req.user.id) {
+      userData = await User.findById(req.user.id);
+    }
+
+    console.log("userData", userData);
+    if (!userData || userData.userType != "admin") {
+      res.status(405).json({ message: "You are not allowed to create Task" });
+      return;
+    }
+    const task = await Task.findById(reqData.taskId);
+    if (!task) {
+      res.status(404).json({ message: "Task not found" });
+      return;
+    }
+    const newTask = await Task.findByIdAndUpdate(
+      reqData.taskId,
+      {
+        assignedTo: reqData.userId,
+      },
+      { new: true }
+    );
+
+    res.json({ message: "Task assigned successfully", newTask });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
