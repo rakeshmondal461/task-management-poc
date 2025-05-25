@@ -21,7 +21,7 @@ app.use(cors());
 
 // Use the router for the /about path
 app.use("/admin", adminRoutes);
-app.use("/userRoutes", userRoutes);
+app.use("/user", userRoutes);
 app.use("/auth", authRoutes);
 
 // Connect to the database

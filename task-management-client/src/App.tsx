@@ -1,45 +1,55 @@
-import { useState } from "react";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  Outlet,
+} from "react-router-dom";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
-import Header from "./components/Header";
 import NotFound from "./pages/NotFound";
+import { useAuth } from "./hooks/useAuth";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   const Home = () => <h1>Home Page</h1>;
   const Dashboard = () => <h1>Dashboard</h1>;
 
-  const Element = () => <h1>Login Page</h1>;
+  const PrivateRoute = ({ allowedUserTypes }) => {
+    const { user, loading } = useAuth();
 
-  //Mock authentication function
-  const isAuthenticated = () => {
-    // Replace with your actual authentication logic
-    return !!localStorage.getItem("token");
-  };
+    if (loading) {
+      return <div>Loading...</div>;
+    }
 
-  const PrivateRoute = () => {
-    const auth = null; // determine if authorized, from context or however you're doing it
+    if (!user) {
+      return <Navigate to="/login" replace />;
+    }
 
-    // If authorized, return an outlet that will render child elements
-    // If not, return element that will navigate to login page
-    return auth ? <Element /> : <Navigate to="/login" />;
+    // Check if userType is allowed for this route
+    if (allowedUserTypes && !allowedUserTypes.includes(user.userType)) {
+      // Redirect to home if userType not allowed
+      return <Navigate to="/" replace />;
+    }
+
+    return <Outlet />;
   };
 
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/login" element={<Login />} />
-
-          <Route path="/" element={<PrivateRoute />}>
-            <Route path="/" element={<Home />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+  <BrowserRouter>
+      <Routes>
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/login" element={<Login />} />
+        <Route element={<PrivateRoute allowedUserTypes={["user"]} />}>
+          <Route path="/" element={<Home />} />
+        </Route>
+        <Route element={<PrivateRoute allowedUserTypes={["admin"]} />}>
+          <Route path="/dashboard" element={<Dashboard />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
     </>
   );
 }

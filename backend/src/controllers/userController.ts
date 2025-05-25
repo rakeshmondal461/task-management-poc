@@ -7,9 +7,7 @@ type UserType = {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
   userType: "user" | "admin";
-  createdAt: NativeDate;
 };
 
 const getUsers = (req: Request, res: Response) => {
@@ -19,9 +17,18 @@ const getUsers = (req: Request, res: Response) => {
 
 export const getUserById = async (req: any, res: Response) => {
   try {
-    const userId = req.params.id;
-    const user = await User.findById(userId);
-    res.status(200).json({ user });
+    const userId = req.user.id;
+    const user: UserType | null = await User.findById(userId);
+    if (!user) {
+      res.status(404).json({ message: "User not found" }); // Remove 'return'
+      return;
+    }
+    res.status(200).json({
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      userType: user.userType,
+    });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -37,6 +44,7 @@ export const signupUser = async (req: any, res: Response) => {
       !newUser.password
     ) {
       res.status(400).json({ message: "Fill all required fields" });
+      return;
     }
 
     const hashed = await bcrypt.hash(newUser.password, 10);
@@ -60,29 +68,39 @@ export const signInUser = async (req: any, res: Response) => {
     const data = req.body;
     if (!data.email || !data.password) {
       res.status(400).json({ message: "Fill all required fields" });
+      return;
     }
 
-    const existUser:UserType|any = await User.findOne({ email: data.email });
-    if (!existUser) res.status(400).json({ message: "Invalid credentials" });
+    const existUser: UserType | any = await User.findOne({ email: data.email });
+    if (!existUser) {
+      res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
 
     const isValidPassword = await bcrypt.compare(
       data.password,
       existUser.password
     );
-    if (!isValidPassword)
+    if (!isValidPassword) {
       res.status(400).json({ message: "Invalid credentials" });
+      return;
+    }
 
     const token = JWT.sign(
       {
         id: existUser._id,
         email: existUser.email,
-        userType: existUser.existUser,
+        userType: existUser.userType,
       },
-      process.env.JWT_SECRET as string,
+      process.env.JWT_SECRET as string
     );
 
-    res.json({ message: "Login successfully", token });
-  } catch (error:any) {
+    res.json({
+      message: "Login successfully",
+      userType: existUser.userType,
+      token
+    });
+  } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
 };

@@ -1,15 +1,16 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { API_BASE_URL } from "../utils/constants";
 import { Button, Card, Space } from "antd";
 import Header from "../components/Header";
 import "./styles/Login.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  let navigate = useNavigate();
 
   async function handleSignin() {
     try {
@@ -23,13 +24,24 @@ const Login = () => {
         password,
       });
       if (res.data) {
-        const token = res?.data?.token;
+        const { token, userType } = res?.data;
         console.log("token", token);
         localStorage.setItem("token", token);
         toast("Signin successfull");
+        if (userType === "admin") {
+          navigate("/dashboard");
+        } else {
+          navigate("/");
+        }
       }
       console.log("res", res);
-    } catch (error) {}
+    } catch (error) {
+      console.error("Error during sign-in:", error);
+      if (axios.isAxiosError(error) && error.response) {
+        // Handle specific error response from the server
+        toast(error.response.data.message || "Sign-in failed");
+      }
+    }
   }
 
   return (
@@ -60,10 +72,12 @@ const Login = () => {
                   name="password"
                 />
               </div>
-              <div style={{padding:'5px'}}>
+              <div style={{ padding: "5px" }}>
                 <Link to="/signup">Click here to sign up</Link>
               </div>
-              <Button onClick={handleSignin} type="primary">Submit</Button>
+              <Button onClick={handleSignin} type="primary">
+                Submit
+              </Button>
               <ToastContainer />
             </div>
           </Card>

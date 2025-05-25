@@ -8,7 +8,7 @@ import {
   updateTaskStatus,
 } from "../controllers/taskController";
 
-router.get("/profile/:id", validateToken as any, getUserById);
+router.get("/profile", validateToken as any, getUserById);
 router.get("/mytasks", validateToken as any, getUserTasks);
 router.get("/task/:id", validateToken as any, getTaskById);
 router.patch("/task/:id", validateToken as any, updateTaskStatus);
