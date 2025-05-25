@@ -1,5 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { API_BASE_URL } from "./constants";
+import type { storeData } from "../types/storeDataTypes";
 
 // Create Axios instance with typed configuration
 const ApiRequest: any = axios.create({
@@ -19,9 +20,9 @@ ApiRequest.interceptors.request.use(
     );
 
     if (!isAuthEndpoint) {
-      const token: string | null = localStorage.getItem("token");
-      if (token && config.headers) {
-        config.headers.Authorization = `Bearer ${token}`;
+      const storeData: storeData = JSON.parse(localStorage.getItem("user")!);
+      if (storeData && storeData.token && config.headers) {
+        config.headers.Authorization = `Bearer ${storeData.token}`;
       }
     }
 

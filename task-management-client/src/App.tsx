@@ -10,10 +10,10 @@ import Login from "./pages/Login";
 import Signup from "./pages/Signup";
 import NotFound from "./pages/NotFound";
 import { useAuth } from "./hooks/useAuth";
+import Home from "./pages/Home";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
-  const Home = () => <h1>Home Page</h1>;
-  const Dashboard = () => <h1>Dashboard</h1>;
 
   const PrivateRoute = ({ allowedUserTypes }) => {
     const { user, loading } = useAuth();

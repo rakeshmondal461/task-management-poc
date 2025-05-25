@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { API_BASE_URL } from "../utils/constants";
@@ -6,11 +6,23 @@ import { Button, Card, Space } from "antd";
 import Header from "../components/Header";
 import "./styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
+import type { storeData } from "../types/storeDataTypes";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   let navigate = useNavigate();
+
+  useEffect(() => {
+    const storeData: storeData = JSON.parse(localStorage.getItem("user"));
+    if (storeData && storeData.token) {
+      if (storeData.userType === "admin") {
+        navigate("/dashboard");
+      } else {
+        navigate("/");
+      }
+    }
+  }, []);
 
   async function handleSignin() {
     try {
@@ -24,11 +36,14 @@ const Login = () => {
         password,
       });
       if (res.data) {
-        const { token, userType } = res?.data;
-        console.log("token", token);
-        localStorage.setItem("token", token);
+        const response = res?.data;
+        console.log("token", response);
+        localStorage.setItem(
+          "user",
+          JSON.stringify({ token: response.token, userType: response.userType })
+        );
         toast("Signin successfull");
-        if (userType === "admin") {
+        if (response.userType === "admin") {
           navigate("/dashboard");
         } else {
           navigate("/");

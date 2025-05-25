@@ -1,5 +1,8 @@
 import { useState, useEffect } from "react";
 import ApiRequest from "../utils/ApiRequest";
+import type { storeData } from "../types/storeDataTypes";
+
+
 
 export const useAuth = () => {
   const [user, setUser] = useState<{
@@ -11,8 +14,10 @@ export const useAuth = () => {
 
   useEffect(() => {
     const fetchUserInfo = async () => {
-      const token: string | null = localStorage.getItem("token");
-      if (!token) {
+      const storeData: storeData = JSON.parse(
+        localStorage.getItem("user")!
+      );
+      if (!storeData || !storeData.token) {
         setLoading(false);
         return;
       }
