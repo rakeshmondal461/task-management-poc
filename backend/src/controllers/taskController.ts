@@ -66,7 +66,7 @@ export const createAndAssignTask = async (req: any, res: Response) => {
     }
 
     const newTask = await Task.create(data);
-    res.json({ message: "Task created successfully", newTask });
+    res.status(201).json({ message: "Task created successfully", newTask });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

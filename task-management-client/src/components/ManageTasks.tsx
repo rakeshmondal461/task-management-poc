@@ -1,42 +1,103 @@
-import React, { useState } from "react";
-import { Form, Select, Input, Button, message } from "antd";
+import React, { useEffect, useState } from "react";
+import { Form, Select, Input, Button, message, List } from "antd";
+import ApiRequest from "../utils/ApiRequest";
+import type { ApiProject } from "../types/project.types";
+import type { ApiUser } from "../types/user.types";
+import type { ApiTask, ListTask } from "../types/task.types";
 const { Option } = Select;
+
+type FormValues = {
+  project: string;
+  assignedUser?: string | null;
+  taskTitle: string;
+};
 
 const ManageTasks = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [projects, setProjects] = useState<{ id: string; name: string }[]>([]);
+  const [users, setUsers] = useState<ListTask[]>([]);
+  const [tasks, setTasks] = useState([]);
 
-  // Mock data for projects and users
-  const projects = [
-    { id: 1, name: "Project Alpha" },
-    { id: 2, name: "Project Beta" },
-    { id: 3, name: "Project Gamma" },
-  ];
+  useEffect(() => {
+    fetchProjects();
+    fetchUsers();
+    fetchAllTasks();
+  }, []);
 
-  const users = [
-    { id: 1, name: "John Doe" },
-    { id: 2, name: "Jane Smith" },
-    { id: 3, name: "Alice Johnson" },
-  ];
+  const fetchAllTasks = async () => {
+    try {
+      const response = await ApiRequest.get(`/admin/allTasks`);
+      const data = response.data;
+      const taskData = data.map((item: ApiTask) => ({
+        id: item._id,
+        name: item.title,
+        project: {
+          id: item.project._id,
+          name: item.project.projectName,
+        },
+        assignedTo: {
+          id: item.assignedTo?._id || null,
+          name: item.assignedTo
+            ? `${item.assignedTo.firstName} ${item.assignedTo.lastName}`
+            : "Unassigned",
+        },
+        status: item.status,
+      }));
+      console.log("Fetched tasks:", taskData);
+      setTasks(taskData);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+
+  const fetchProjects = async () => {
+    try {
+      const response = await ApiRequest.get(`/admin/projects`);
+      const data = response.data.projects;
+      const projectData = data.map((item: ApiProject) => ({
+        id: item._id,
+        name: item.projectName,
+      }));
+      setProjects(projectData);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
+
+  const fetchUsers = async () => {
+    try {
+      const response = await ApiRequest.get(`/admin/users`);
+      const data = response.data;
+      if (!data || data.length === 0) {
+        console.error("No users found");
+        return;
+      }
+      const userData = data.map((item: ApiUser) => ({
+        id: item._id,
+        name: `${item.firstName} ${item.lastName}`,
+        isActive: item.isActive,
+      }));
+      setUsers(userData);
+    } catch (error) {
+      console.error("Fetch error:", error);
+    }
+  };
 
   // Handle form submission
-  const onFinish = async (values) => {
+  const onFinish = async (values: FormValues) => {
     setLoading(true);
+    console.log("Submitting form with values:", values);
     try {
       // Mock API call
       console.log("Form values:", values);
-      // Replace with your actual API call
-      await fetch("https://api.example.com/tasks", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          projectId: values.project,
-          title: values.taskTitle,
-          assignedUser: values.assignedUser || null,
-        }),
+
+      await ApiRequest.post(`/admin/createTask`, {
+        projectId: values.project,
+        title: values.taskTitle,
+        userId: values.assignedUser || null,
       });
+
       message.success("Task created successfully!");
       form.resetFields();
     } catch (error) {
@@ -95,6 +156,25 @@ const ManageTasks = () => {
             </Button>
           </Form.Item>
         </Form>
+
+        <List
+          header={<div className="font-semibold">Tasks</div>}
+          bordered
+          dataSource={tasks}
+          renderItem={(task: ListTask) => {
+            return (
+              <>
+                <List.Item>
+                  {task.name} 🚀 {task.project.name} 🚀
+                  {task.assignedTo.name}
+                  <span className="ml-2 text-sm text-gray-500">
+                    {" "}{task.status}
+                  </span>
+                </List.Item>
+              </>
+            );
+          }}
+        />
       </div>
     </div>
   );
