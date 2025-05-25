@@ -30,18 +30,13 @@ const ManageProjects = () => {
   };
 
   const onFinish = async (values: any) => {
-    console.log("Form values:", values);
+    console.log("Form values:", values, editingProject);
     try {
       if (editingProject) {
-        // Mock PUT API call for updating project
-        await fetch(
-          `https://jsonplaceholder.typicode.com/todos/${editingProject.id}`,
-          {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ title: values.projectName }),
-          }
-        );
+        await ApiRequest.put(`/admin/updateProject/${editingProject.id}`, {
+          projectName: values.projectName,
+        });
+
         toast("Project updated successfully");
         setProjects(
           projects.map((project) =>
@@ -72,7 +67,7 @@ const ManageProjects = () => {
     }
   };
 
-  const handleEdit = (project:ListProject) => {
+  const handleEdit = (project: ListProject) => {
     setEditingProject(project);
     form.setFieldsValue({ projectName: project.name });
   };
@@ -95,7 +90,12 @@ const ManageProjects = () => {
             <Input placeholder="Enter project name" />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" className="w-full">
+            <Button
+              type="primary"
+              color={editingProject ? "danger" : "primary"}
+              htmlType="submit"
+              className="w-full"
+            >
               {editingProject ? "Update" : "Submit"}
             </Button>
           </Form.Item>
@@ -104,7 +104,7 @@ const ManageProjects = () => {
           header={<div className="font-semibold">Projects</div>}
           bordered
           dataSource={projects}
-          renderItem={(project:ListProject) => (
+          renderItem={(project: ListProject) => (
             <List.Item
               actions={[
                 <Button type="link" onClick={() => handleEdit(project)}>

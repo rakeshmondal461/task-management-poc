@@ -58,7 +58,9 @@ export const updateProject = async (req: Request, res: Response) => {
     const updatedProject = await Project.findByIdAndUpdate(projectId, data, {
       new: true,
     });
-    res.json({ message: "Project updated successfully", updatedProject });
+    res
+      .status(200)
+      .json({ message: "Project updated successfully", updatedProject });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }

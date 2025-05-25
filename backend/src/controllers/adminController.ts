@@ -21,3 +21,17 @@ export const getUserById = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const activeUser = async (req: Request, res: Response) => {
+  try {
+    const userId = req.params.id;
+    const users = await User.findByIdAndUpdate(
+      userId,
+      { isActive: req.body.isActive },
+      { new: true }
+    );
+    res.status(200).json(users);
+  } catch (error: any) {
+    res.status(500).json({ error: error?.message });
+  }
+};
