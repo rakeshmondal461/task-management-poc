@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Form, Select, Input, Button, message, List } from "antd";
 import ApiRequest from "../utils/ApiRequest";
 import type { ApiProject } from "../types/project.types";
 import type { ApiUser } from "../types/user.types";
 import type { ApiTask, ListTask } from "../types/task.types";
+import { capitalize } from "../utils/common";
+import { toast } from "react-toastify";
 const { Option } = Select;
 
 type FormValues = {
@@ -18,6 +20,7 @@ const ManageTasks = () => {
   const [projects, setProjects] = useState<{ id: string; name: string }[]>([]);
   const [users, setUsers] = useState<ListTask[]>([]);
   const [tasks, setTasks] = useState([]);
+  const [editingTask, setEditingTask] = useState<ListTask | null>(null);
 
   useEffect(() => {
     fetchProjects();
@@ -86,26 +89,49 @@ const ManageTasks = () => {
 
   // Handle form submission
   const onFinish = async (values: FormValues) => {
-    setLoading(true);
-    console.log("Submitting form with values:", values);
     try {
-      // Mock API call
-      console.log("Form values:", values);
+      setLoading(true);
+      if (editingTask) {
+        // Mock API call
+        console.log("Form values:", values);
 
-      await ApiRequest.post(`/admin/createTask`, {
-        projectId: values.project,
-        title: values.taskTitle,
-        userId: values.assignedUser || null,
-      });
+        await ApiRequest.patch(`/admin/assignTask/${editingTask.id}`, {
+          userId: values.assignedUser,
+        });
 
-      message.success("Task created successfully!");
-      form.resetFields();
+        toast("Task updated successfully!");
+        form.resetFields();
+        setEditingTask(null);
+      } else {
+        // Mock API call
+        console.log("Form values:", values);
+
+        await ApiRequest.post(`/admin/createTask`, {
+          projectId: values.project,
+          title: values.taskTitle,
+          userId: values.assignedUser || null,
+        });
+
+        message.success("Task created successfully!");
+        form.resetFields();
+      }
+      fetchAllTasks();
     } catch (error) {
       console.error("Error submitting form:", error);
       message.error("Failed to create task.");
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleAssign = async (task: ListTask) => {
+    setEditingTask(task);
+    form.setFieldsValue({
+      project: task.project.id,
+      assignedUser: task.assignedTo.id || null,
+      taskTitle: task.name,
+    });
+    form.scrollToField("project");
   };
 
   return (
@@ -140,8 +166,19 @@ const ManageTasks = () => {
             <Input placeholder="Enter task title or details" />
           </Form.Item>
 
-          <Form.Item label="Assign User (Optional)" name="assignedUser">
-            <Select placeholder="Select a user" allowClear>
+          <Form.Item
+            label={editingTask ? "Assign User" : "Assign User (Optional)"}
+            name="assignedUser"
+            rules={[
+              editingTask
+                ? { required: true, message: "Please select target user" }
+                : { required: false, message: "Optional" },
+            ]}
+          >
+            <Select
+              placeholder="Select a user"
+              allowClear
+            >
               {users.map((user) => (
                 <Option key={user.id} value={user.id}>
                   {user.name}
@@ -151,30 +188,53 @@ const ManageTasks = () => {
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} block>
-              Submit
+            <Button
+              variant="solid"
+              color={editingTask ? "danger" : "blue"}
+              htmlType="submit"
+              loading={loading}
+              block
+            >
+              {editingTask ? "Update" : "Submit"}
             </Button>
           </Form.Item>
         </Form>
-
-        <List
-          header={<div className="font-semibold">Tasks</div>}
-          bordered
-          dataSource={tasks}
-          renderItem={(task: ListTask) => {
-            return (
-              <>
-                <List.Item>
-                  {task.name} 🚀 {task.project.name} 🚀
-                  {task.assignedTo.name}
-                  <span className="ml-2 text-sm text-gray-500">
-                    {" "}{task.status}
-                  </span>
-                </List.Item>
-              </>
-            );
-          }}
-        />
+      </div>
+      <div className="tableContainer mt-8">
+        <table className="taskTable">
+          <caption className="text-lg font-bold mb-4">Task List</caption>
+          <thead className="bg-gray-100">
+            <tr>
+              <th>Task Name</th>
+              <th>Project</th>
+              <th>Assigned To</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            {tasks.map((task: ListTask) => (
+              <tr key={task.id}>
+                <td>{capitalize(task.name)}</td>
+                <td>{capitalize(task.project.name)}</td>
+                <td>
+                  {task.assignedTo.id === null ? (
+                    <Button
+                      size="small"
+                      color="purple"
+                      variant="solid"
+                      onClick={() => handleAssign(task)}
+                    >
+                      Assign
+                    </Button>
+                  ) : (
+                    capitalize(task.assignedTo.name)
+                  )}
+                </td>
+                <td>{capitalize(task.status)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

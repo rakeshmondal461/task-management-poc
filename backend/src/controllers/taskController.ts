@@ -75,7 +75,8 @@ export const createAndAssignTask = async (req: any, res: Response) => {
 export const assignTask = async (req: any, res: Response) => {
   try {
     const reqData = req.body;
-    if (!reqData.userId || !reqData.taskId) {
+    const taskId = req.params.id;
+    if (!reqData.userId || !taskId) {
       res.status(400).json({ message: "provide required data" });
       return;
     }
@@ -90,13 +91,13 @@ export const assignTask = async (req: any, res: Response) => {
       res.status(405).json({ message: "You are not allowed to create Task" });
       return;
     }
-    const task = await Task.findById(reqData.taskId);
+    const task = await Task.findById(taskId);
     if (!task) {
       res.status(404).json({ message: "Task not found" });
       return;
     }
     const newTask = await Task.findByIdAndUpdate(
-      reqData.taskId,
+      taskId,
       {
         assignedTo: reqData.userId,
       },

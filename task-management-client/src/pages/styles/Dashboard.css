@@ -20,3 +20,24 @@
     margin: 10px auto;
     padding: 20px;
 }
+
+.tableContainer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 20px;
+}
+
+.taskTable{
+    width: 75%;
+    border: 1px solid #dee2e6;
+    border-collapse: separate;
+    margin-top: 20px;
+}
+.taskTable th, .taskTable td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #dee2e6;
+
+}
