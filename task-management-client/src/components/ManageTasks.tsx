@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { Form, Select, Input, Button, message, List } from "antd";
 import ApiRequest from "../utils/ApiRequest";
 import type { ApiProject } from "../types/project.types";
@@ -6,6 +6,7 @@ import type { ApiUser } from "../types/user.types";
 import type { ApiTask, ListTask } from "../types/task.types";
 import { capitalize } from "../utils/common";
 import { toast } from "react-toastify";
+import { SocketContext } from "../context/SocketContext";
 const { Option } = Select;
 
 type FormValues = {
@@ -21,6 +22,25 @@ const ManageTasks = () => {
   const [users, setUsers] = useState<ListTask[]>([]);
   const [tasks, setTasks] = useState([]);
   const [editingTask, setEditingTask] = useState<ListTask | null>(null);
+
+  const socket = useContext(SocketContext);
+
+  useEffect(() => {
+    socket.on("update-task-status", (data: any) => {
+      console.log("update-task-status message:", data);
+      if (data) {
+        setTasks((prevTasks: ListTask[]) =>
+          prevTasks.map((task) =>
+            task.id === data.taskId ? { ...task, status: data.status } : task
+          )
+        );
+      }
+    });
+
+    return () => {
+      socket.off("message");
+    };
+  }, [socket]);
 
   useEffect(() => {
     fetchProjects();
@@ -175,10 +195,7 @@ const ManageTasks = () => {
                 : { required: false, message: "Optional" },
             ]}
           >
-            <Select
-              placeholder="Select a user"
-              allowClear
-            >
+            <Select placeholder="Select a user" allowClear>
               {users.map((user) => (
                 <Option key={user.id} value={user.id}>
                   {user.name}

@@ -5,16 +5,14 @@ import adminRoutes from "./routes/adminRoutes";
 import userRoutes from "./routes/userRoutes";
 import authRoutes from "./routes/authRoutes";
 import cors from "cors";
-import { createServer } from 'node:http';
+import http from "http";
 import { initSocket } from "./utils/socket";
-
-
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 4001;
-const httpServer = createServer(app);
+//const httpServer = createServer(app);
 
 app.use(express.json());
 app.use(cors());
@@ -26,10 +24,12 @@ app.use("/auth", authRoutes);
 
 // Connect to the database
 
+const httpServer = http.createServer(app);
+
 initSocket(httpServer)
 
 connectDB().then(() => {
-  app.listen(PORT, () => {
+  httpServer.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
 });

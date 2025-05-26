@@ -1,9 +1,10 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 import CommonHeader from "../components/CommonHeader";
 import "./styles/Dashboard.css";
 import ManageProjects from "../components/ManageProjects";
 import ManageUsers from "../components/ManageUsers";
 import ManageTasks from "../components/ManageTasks";
+import { SocketContext } from "../context/SocketContext";
 
 const Dashboard = () => {
   const [currentComponent, setCurrentComponent] = useState("");
@@ -24,6 +25,7 @@ const Dashboard = () => {
       );
     }
   }, [currentComponent]);
+
 
   return (
     <>

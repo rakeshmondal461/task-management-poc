@@ -20,7 +20,10 @@ export const getTasks = async (req: Request, res: Response) => {
 };
 export const getUserTasks = async (req: any, res: Response) => {
   try {
-    const tasks = await Task.find({ assignedTo: req?.user.id });
+    const tasks = await Task.find({ assignedTo: req?.user.id }).populate(
+      "project",
+      "projectName"
+    );
     res.status(200).json({ tasks });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -119,12 +122,16 @@ export const updateTaskStatus = async (req: Request, res: Response) => {
       res.status(400).json({ message: "Select status" });
     }
 
-    const task = await Task.findByIdAndUpdate(taskId, {
-      status: reqData.status,
-    });
+    const task = await Task.findByIdAndUpdate(
+      taskId,
+      {
+        status: reqData.status,
+      },
+      { new: true }
+    );
     const io = getIO();
     io.emit("update-task-status", {
-      taskId: reqData.taskId,
+      taskId: taskId,
       status: reqData.status,
     });
     res.json({ message: "Task updated successfully", task });

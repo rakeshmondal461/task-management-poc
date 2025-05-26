@@ -1,4 +1,3 @@
-
 import {
   BrowserRouter,
   Routes,
@@ -14,7 +13,6 @@ import Home from "./pages/Home";
 import Dashboard from "./pages/Dashboard";
 
 function App() {
-
   const PrivateRoute = ({ allowedUserTypes }) => {
     const { user, loading } = useAuth();
 
@@ -37,19 +35,19 @@ function App() {
 
   return (
     <>
-  <BrowserRouter>
-      <Routes>
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/login" element={<Login />} />
-        <Route element={<PrivateRoute allowedUserTypes={["user"]} />}>
-          <Route path="/" element={<Home />} />
-        </Route>
-        <Route element={<PrivateRoute allowedUserTypes={["admin"]} />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/login" element={<Login />} />
+          <Route element={<PrivateRoute allowedUserTypes={["user"]} />}>
+            <Route path="/" element={<Home />} />
+          </Route>
+          <Route element={<PrivateRoute allowedUserTypes={["admin"]} />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </BrowserRouter>
     </>
   );
 }
