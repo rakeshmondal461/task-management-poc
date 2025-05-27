@@ -3,7 +3,6 @@ import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import { API_BASE_URL } from "../utils/constants";
 import { Button, Card, Space } from "antd";
-import Header from "../components/Header";
 import "./styles/Login.css";
 import { Link, useNavigate } from "react-router-dom";
 import type { storeData } from "../types/storeDataTypes";
@@ -60,7 +59,6 @@ const Login = () => {
 
   return (
     <>
-      <Header />
       <div className="loginCardContainer">
         <Space direction="vertical" size={16}>
           <Card title="Login" className="loginCard">

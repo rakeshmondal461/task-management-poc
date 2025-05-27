@@ -1,8 +1,7 @@
 import axios from "axios";
-import React, { useState } from "react";
+import { useState } from "react";
 import { API_BASE_URL } from "../utils/constants";
 import { ToastContainer, toast } from "react-toastify";
-import Header from "../components/Header";
 import { Button, Card, Space } from "antd";
 import "./styles/Signup.css";
 import { Link } from "react-router-dom";
@@ -39,7 +38,6 @@ const Signup = () => {
 
   return (
     <>
-      <Header />
       <div className="signupCardContainer">
         <Space direction="vertical" size={16}>
           <Card title="Sign Up" className="signupCard">
