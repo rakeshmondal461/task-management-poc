@@ -58,8 +58,9 @@ const ManageUsers = () => {
               <List.Item
                 actions={[
                   <Button
-                    type="link"
+                    variant="solid"
                     onClick={() => handleActiveDeactive(user)}
+                    color={user.isActive ? "red" : "green"}
                   >
                     {user.isActive ? "Deactivate" : "Activate"}
                   </Button>,

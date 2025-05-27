@@ -1,15 +1,14 @@
-import { useState, useEffect, useMemo, useContext } from "react";
+import { useState } from "react";
 import CommonHeader from "../components/CommonHeader";
 import "./styles/Dashboard.css";
 import ManageProjects from "../components/ManageProjects";
 import ManageUsers from "../components/ManageUsers";
 import ManageTasks from "../components/ManageTasks";
-import { SocketContext } from "../context/SocketContext";
 
 const Dashboard = () => {
   const [currentComponent, setCurrentComponent] = useState("");
 
-  const rednderView = useMemo(() => {
+  const rednderView = () => {
     if (currentComponent === "projects") {
       return <ManageProjects />;
     } else if (currentComponent === "users") {
@@ -24,8 +23,7 @@ const Dashboard = () => {
         </div>
       );
     }
-  }, [currentComponent]);
-
+  };
 
   return (
     <>
@@ -46,7 +44,7 @@ const Dashboard = () => {
             </li>
           </ul>
         </nav>
-        {rednderView}
+        {rednderView()}
       </div>
     </>
   );
