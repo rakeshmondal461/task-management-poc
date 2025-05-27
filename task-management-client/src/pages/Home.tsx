@@ -9,9 +9,16 @@ import {
   DownOutlined,
   HourglassOutlined,
   PauseCircleOutlined,
-  SmileOutlined,
   StopOutlined,
 } from "@ant-design/icons";
+import Chip from "../components/common/Chip";
+
+const chipTypePair = {
+  "in progress": "info",
+  completed: "success",
+  rejected: "danger",
+  pending: "pending",
+};
 
 const items: MenuProps["items"] = [
   {
@@ -115,19 +122,18 @@ const Home = () => {
     }
   };
 
-
-    const handleStatusChange = async (taskId: string, status: string) => {
-        try {
-        await ApiRequest.patch(`/user/task/${taskId}`, { status });
-        setTasks((prevTasks) =>
-            prevTasks.map((task) =>
-            task.id === taskId ? { ...task, status } : task
-            )
-        );
-        } catch (error) {
-        console.error("Error updating task status:", error);
-        }
-    };
+  const handleStatusChange = async (taskId: string, status: string) => {
+    try {
+      await ApiRequest.patch(`/user/task/${taskId}`, { status });
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task.id === taskId ? { ...task, status } : task
+        )
+      );
+    } catch (error) {
+      console.error("Error updating task status:", error);
+    }
+  };
 
   return (
     <>
@@ -152,7 +158,11 @@ const Home = () => {
                   <tr key={task.id}>
                     <td>{capitalize(task.name)}</td>
                     <td>{capitalize(task.project.name)}</td>
-                    <td>{capitalize(task.status)}</td>
+                    <td>
+                      <Chip type={chipTypePair[task.status]}>
+                        {capitalize(task.status)}
+                      </Chip>
+                    </td>
                     <td>
                       <Space wrap>
                         <Dropdown
@@ -160,7 +170,7 @@ const Home = () => {
                             items,
                             onClick: (e) => {
                               console.log("Selected status:", e.key, task.id);
-                             // handleStatusChange(task.id, e.key);
+                              // handleStatusChange(task.id, e.key);
                               // Here you can handle the status change
                               // For example, you can call an API to update the task status
                               handleStatusChange(task.id, e.key);
