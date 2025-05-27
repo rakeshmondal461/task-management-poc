@@ -1,5 +1,5 @@
-import  { useContext, useEffect, useState } from "react";
-import { Form, Select, Input, Button, message, } from "antd";
+import { useContext, useEffect, useState } from "react";
+import { Form, Select, Input, Button, message } from "antd";
 import ApiRequest from "../utils/ApiRequest";
 import type { ApiProject } from "../types/project.types";
 import type { ApiUser } from "../types/user.types";
@@ -26,7 +26,7 @@ const ManageTasks = () => {
   const socket = useContext(SocketContext);
 
   useEffect(() => {
-    socket.on("update-task-status", (data: any) => {
+    const handleUpdateStatus = (data: any) => {
       if (data) {
         setTasks((prevTasks: ListTask[]) =>
           prevTasks.map((task) =>
@@ -34,10 +34,12 @@ const ManageTasks = () => {
           )
         );
       }
-    });
+    };
+
+    socket.on("update-task-status", handleUpdateStatus);
 
     return () => {
-      socket.off("message");
+      socket.off("update-task-status", handleUpdateStatus);
     };
   }, [socket]);
 

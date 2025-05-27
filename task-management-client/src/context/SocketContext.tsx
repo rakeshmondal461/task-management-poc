@@ -15,17 +15,12 @@ export const SocketProvider = ({ children }) => {
   useEffect(() => {
     // Connect to the socket server
     socket.on("connect", () => {
-      console.log(socket.id); // x8WIv7-mJelg7on_ALbx
+      console.log(socket.id);
     });
 
     socket.on("disconnect", () => {
       console.log(socket.id); // undefined
     });
-
-    // // Cleanup on unmount
-    // return () => {
-    //   socket.disconnect();
-    // };
   }, [socket]);
 
   return (
