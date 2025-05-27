@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
-import { Form, Select, Input, Button, message, List } from "antd";
+import  { useContext, useEffect, useState } from "react";
+import { Form, Select, Input, Button, message, } from "antd";
 import ApiRequest from "../utils/ApiRequest";
 import type { ApiProject } from "../types/project.types";
 import type { ApiUser } from "../types/user.types";
@@ -27,7 +27,6 @@ const ManageTasks = () => {
 
   useEffect(() => {
     socket.on("update-task-status", (data: any) => {
-      console.log("update-task-status message:", data);
       if (data) {
         setTasks((prevTasks: ListTask[]) =>
           prevTasks.map((task) =>
@@ -107,14 +106,10 @@ const ManageTasks = () => {
     }
   };
 
-  // Handle form submission
   const onFinish = async (values: FormValues) => {
     try {
       setLoading(true);
       if (editingTask) {
-        // Mock API call
-        console.log("Form values:", values);
-
         await ApiRequest.patch(`/admin/assignTask/${editingTask.id}`, {
           userId: values.assignedUser,
         });
@@ -123,9 +118,6 @@ const ManageTasks = () => {
         form.resetFields();
         setEditingTask(null);
       } else {
-        // Mock API call
-        console.log("Form values:", values);
-
         await ApiRequest.post(`/admin/createTask`, {
           projectId: values.project,
           title: values.taskTitle,
